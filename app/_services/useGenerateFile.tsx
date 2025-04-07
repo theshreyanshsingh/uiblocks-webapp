@@ -45,6 +45,8 @@ function decodeJsonString(str: string | null | undefined): string {
   }
 }
 
+export const maxDuration = 60;
+
 export const useGenerateFile = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { email } = useAuthenticated();
