@@ -7,8 +7,8 @@ import {
   Part,
 } from "@google/generative-ai";
 import { chatPrompt, systemPrompt } from "../config/prompt";
-// export const runtime = "edge";
-// export const maxDuration = 60;
+export const runtime = "edge";
+export const maxDuration = 60;
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY_1!);
 

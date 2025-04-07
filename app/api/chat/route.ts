@@ -3,6 +3,7 @@ import { makeStreamText } from "@/app/helpers/AiGen";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "edge"; // Edge runtime is good for streaming
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
