@@ -6,6 +6,7 @@ import {
   setReaderMode,
 } from "../redux/reducers/projectOptions";
 import {
+  EmptySheet,
   setEmptyMarkdown,
   setMarkdown,
   setNewProjectData,
@@ -448,6 +449,7 @@ export const useGenerateFile = () => {
     try {
       dispatch(setEmptyMarkdown(""));
       dispatch(setReaderMode(false));
+      dispatch(EmptySheet());
 
       dispatch(
         setGenerating({

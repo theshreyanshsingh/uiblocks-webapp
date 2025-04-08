@@ -25,6 +25,8 @@ export const fetchProject = createAsyncThunk<
   FetchProjectParams
 >("projectOptions/fetchProject", async ({ string: requestBody }, thunkAPI) => {
   try {
+    // Clear url and enh_prompt before making the request
+    thunkAPI.dispatch(clearUrlAndPrompt());
     thunkAPI.dispatch(EmptySheet());
 
     const url = `${API}/build-project`;
@@ -115,6 +117,13 @@ const projectOptions = createSlice({
   name: "projectoptions",
   initialState,
   reducers: {
+    clearUrlAndPrompt: (state) => {
+      return {
+        ...state,
+        url: null,
+        enh_prompt: null,
+      };
+    },
     setprojectOptions: (state, action: PayloadAction<PlanState>) => {
       return {
         ...state,
@@ -250,5 +259,6 @@ export const {
   setReaderMode,
   setprojectDetails,
   setPromptCount,
+  clearUrlAndPrompt,
 } = projectOptions.actions;
 export default projectOptions.reducer;
