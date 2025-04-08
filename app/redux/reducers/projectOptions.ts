@@ -25,7 +25,8 @@ export const fetchProject = createAsyncThunk<
   FetchProjectParams
 >("projectOptions/fetchProject", async ({ string: requestBody }, thunkAPI) => {
   try {
-    thunkAPI.dispatch(EmptySheet()); //wiping current data
+    thunkAPI.dispatch(EmptySheet());
+
     const url = `${API}/build-project`;
     const response = await fetch(url, {
       method: "POST",
@@ -217,6 +218,7 @@ const projectOptions = createSlice({
           promptCount: number | null;
         }>
       ) => {
+        state.url = null; //previous url should be null
         state.loading = "done";
         state.title = action.payload.title;
         state.projectId = action.payload.projectId;
