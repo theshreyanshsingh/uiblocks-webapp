@@ -53,7 +53,7 @@ const Sheet: NextPage = () => {
   }, [url]);
 
   return (
-    <div className="flex flex-col flex-grow md:max-w-[97vw] md:w-[60vw]  h-auto  max-md:w-screen overflow-hidden bg-[#121214]">
+    <div className="flex flex-col flex-grow md:max-w-[97vw] md:w-[60vw]  max-md:h-[95vh]  max-md:w-screen overflow-hidden bg-[#121214]">
       <Header />
 
       {!isResponseCompleted && generationSuccess === null && enh_prompt && (

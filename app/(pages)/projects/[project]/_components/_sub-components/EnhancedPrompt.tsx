@@ -178,7 +178,7 @@ const EnhancedPrompt = ({
     <div className="relative flex justify-center items-center bg-opacity-50 w-full h-full">
       <div className="absolute transform -translate-y-1/2 top-1/2 space-y-3">
         <h3 className="text-lg font-semibold">Enhanced Prompt</h3>
-        <div className="w-[50vw] h-[50vh] overflow-y-auto bg-[#252527] p-6 rounded-lg shadow-lg text-white font-sans font-medium">
+        <div className="max-md:w-[80vw] md:w-[50vw] h-[50vh] overflow-y-auto bg-[#252527] p-6 rounded-lg shadow-lg text-white font-sans font-medium">
           <h4 className="text-sm font-medium underline mb-2">
             Project Summary
           </h4>

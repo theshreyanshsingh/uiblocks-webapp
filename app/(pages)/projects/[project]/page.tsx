@@ -6,7 +6,7 @@ import MobileChat from "./_components/_sub-components/MobileChat";
 
 const Page: NextPage = () => {
   return (
-    <div className="flex justify-between max-md:w-screen">
+    <div className="flex justify-between h-full max-md:w-screen">
       <Sheet />
       {/* Desktop */}
       <Chat />
