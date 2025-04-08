@@ -1,8 +1,8 @@
-import { API } from "@/app/config/Config";
+import { API, POLAR_WEBHOOK_SECRET } from "@/app/config/Config";
 import { Webhooks } from "@polar-sh/nextjs";
 
 export const POST = Webhooks({
-  webhookSecret: process.env.POLAR_WEBHOOK_SECRET!,
+  webhookSecret: POLAR_WEBHOOK_SECRET as string,
   onPayload: async (payload) => {
     if (
       payload.type === "subscription.created" ||

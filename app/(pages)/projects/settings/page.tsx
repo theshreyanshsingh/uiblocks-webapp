@@ -204,7 +204,7 @@ const Page = () => {
                     get you reloaded and back to creating!
                   </p>
                 )}
-                {settings?.plan === "free" ? (
+                {!settingsLoading && settings?.plan === "free" ? (
                   <motion.button
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -217,18 +217,20 @@ const Page = () => {
                     Upgrade to Scale
                   </motion.button>
                 ) : (
-                  <motion.button
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2 }}
-                    onClick={() => {
-                      dispatch(setPricingModalOpen(true));
-                    }}
-                    className="justify-center items-center flex font-sans py-1 gap-x-1 font-medium text-gray-200 rounded-md text-xs border border-[#272628] cursor-pointer px-2 p-1"
-                  >
-                    Renews at{" "}
-                    {moment(settings?.subscriptionEndDate).format("DD/MM/YY")}
-                  </motion.button>
+                  !settingsLoading && (
+                    <motion.button
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                      onClick={() => {
+                        dispatch(setPricingModalOpen(true));
+                      }}
+                      className="justify-center items-center flex font-sans py-1 gap-x-1 font-medium text-gray-200 rounded-md text-xs border border-[#272628] cursor-pointer px-2 p-1"
+                    >
+                      Renews at{" "}
+                      {moment(settings?.subscriptionEndDate).format("DD/MM/YY")}
+                    </motion.button>
+                  )
                 )}
               </motion.div>
             </div>

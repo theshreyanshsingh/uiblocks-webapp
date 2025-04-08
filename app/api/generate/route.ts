@@ -1,15 +1,31 @@
 // app/api/generate/route.ts
 import { GenerateFiles } from "@/app/helpers/AiGen";
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 export const runtime = "edge"; // Edge runtime is good for streaming
 
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
-    const string = await req.json(); // Add backend
+    // Verify authentication
+    const token = await getToken({
+      req,
+      secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET,
+    });
+
+    // If no token exists, user is not authenticated
+    if (!token) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
+    const string = await req.json();
 
     const { input, framework, cssLibrary, memory, images } = string;
+
     if (!input) {
       return NextResponse.json(
         { error: "Prompt is required" },

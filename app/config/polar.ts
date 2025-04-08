@@ -1,5 +1,10 @@
 import { Polar } from "@polar-sh/sdk";
-import { POLAR_TOKEN } from "./Config";
+import {
+  POLAR_SERVER,
+  POLAR_SUCCESS_URL,
+  POLAR_TOKEN,
+  PRODUCT_ID,
+} from "./Config";
 
 // Create checkout function to be called at runtime
 export const createCheckout = async ({
@@ -15,14 +20,14 @@ export const createCheckout = async ({
 
   const polar = new Polar({
     accessToken: POLAR_TOKEN,
-    server: "sandbox",
+    server: POLAR_SERVER as "production",
   });
 
   return await polar.checkouts.create({
-    productId: "27c09739-c2b8-465c-9a68-25de037a26db",
+    productId: PRODUCT_ID as string,
     customerEmail: email,
     customerExternalId: id,
-    successUrl: "http://localhost:3000/projects/settings",
+    successUrl: POLAR_SUCCESS_URL,
   });
 };
 

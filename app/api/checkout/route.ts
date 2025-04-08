@@ -1,8 +1,23 @@
 import { NextResponse } from "next/server";
 import { createCheckout } from "@/app/config/polar";
+import { getToken } from "next-auth/jwt";
+import { NextRequest } from "next/server";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    // Verify authentication
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET,
+    });
+
+    // If no token exists, user is not authenticated
+    if (!token) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
     // Get email and id from request body
     const { email, id } = await request.json();
 
