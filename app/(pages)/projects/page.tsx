@@ -11,8 +11,11 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuthenticated } from "@/app/helpers/useAuthenticated";
 import { useProjectsData } from "@/app/helpers/useProjectsData";
-
 import moment from "moment";
+
+interface Project {
+  generatedName: string;
+}
 const Page = () => {
   const { email } = useAuthenticated();
   const { projects, loading } = useProjectsData(email.value);
@@ -57,8 +60,12 @@ const Page = () => {
     });
   };
 
+  const handleOpenProject = async (project: Project) => {
+    router.push(`/projects/${project.generatedName}`);
+  };
+
   return (
-    <div className="flex flex-col bg-[#141415] h-screen w-screen overflow-hidden">
+    <div className="flex flex-col bg-[#141415] h-screen max-md:w-screen overflow-hidden">
       {/* Header */}
       <div className="border-b border-[#201F22] px-3 flex justify-between items-center space-x-7">
         <h2 className="font-bold text-left font-sans text-white">Projects</h2>
@@ -141,9 +148,7 @@ const Page = () => {
                         </div>
                         <div className="justify-between items-center flex w-full border-t border-[#201F22] py-3">
                           <button
-                            onClick={() => {
-                              router.push(`/projects/${project.generatedName}`);
-                            }}
+                            onClick={() => [handleOpenProject(project)]}
                             className="justify-center items-center flex text-white rounded-md px-2 p-[2px] cursor-pointer hover:bg-[#1A1A1A] font-sans font-medium text-xs"
                           >
                             Open Project
@@ -195,9 +200,7 @@ const Page = () => {
                         </div>
                         <div className="justify-between items-center flex w-full border-t border-[#201F22] py-3">
                           <button
-                            onClick={() => {
-                              router.push(`/projects/${project.generatedName}`);
-                            }}
+                            onClick={() => [handleOpenProject(project)]}
                             className="justify-center items-center flex text-white rounded-md px-2 p-[2px] cursor-pointer hover:bg-[#1A1A1A] font-sans font-medium text-xs "
                           >
                             Open Project

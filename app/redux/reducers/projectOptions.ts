@@ -49,6 +49,10 @@ export const fetchProject = createAsyncThunk<
     thunkAPI.dispatch(clearImagesURL());
     thunkAPI.dispatch(setId(data.id));
 
+    if (!data.url) {
+      thunkAPI.dispatch(setGenerationSuccess(null));
+    }
+
     return {
       title: data.title,
       projectId: data.projectId,
@@ -136,6 +140,15 @@ const projectOptions = createSlice({
       return {
         ...state,
         promptCount: action.payload,
+      };
+    },
+    setGenerationSuccess: (
+      state,
+      action: PayloadAction<"success" | "thinking" | "failed" | null>
+    ) => {
+      return {
+        ...state,
+        generationSuccess: action.payload,
       };
     },
     setMemory: (state, action: PayloadAction<string>) => {
@@ -260,5 +273,6 @@ export const {
   setprojectDetails,
   setPromptCount,
   clearUrlAndPrompt,
+  setGenerationSuccess,
 } = projectOptions.actions;
 export default projectOptions.reducer;

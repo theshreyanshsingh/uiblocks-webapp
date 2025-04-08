@@ -23,6 +23,7 @@ import { API } from "../config/Config";
 import { setNotification } from "../redux/reducers/NotificationModalReducer";
 import { BsLightningChargeFill } from "react-icons/bs";
 import { useSubscriptionCheck } from "../helpers/useSubscriptionCheck";
+import { EmptySheet } from "../redux/reducers/projectFiles";
 
 const Hero = () => {
   const [input, setInput] = useState("");
@@ -326,7 +327,14 @@ const Hero = () => {
       sessionStorage.setItem("projectId", projectId);
 
       if (isAuthenticated.value && projectId && email.value && !loading) {
-        dispatch(setGenerating({ generating: true }));
+        dispatch(
+          setGenerating({
+            generating: true,
+            generationSuccess: null,
+            isResponseCompleted: false,
+          })
+        );
+        dispatch(EmptySheet());
 
         router.push(`/projects/${projectId}`);
       } else {

@@ -36,12 +36,7 @@ const projectFilesSlice = createSlice({
     setEmptyMarkdown: (state, action) => {
       state.markdown = action.payload;
     },
-    EmptySheet: (state) => {
-      state.markdown = "";
-      state.files = null;
-      state.data = null;
-      state.filesLoaded = false;
-    },
+    EmptySheet: () => initialState,
   },
 });
 

@@ -114,7 +114,7 @@ const Switcher = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="absolute top-10 z-50 left-1/2 transform -translate-x-1/2 justify-center items-center flex bg-white text-black text-xs font-medium px-3 py-2 rounded-md shadow-lg min-w-max max-w-sm whitespace-normal"
+            className="absolute top-10 z-50 left-1/2 transform -translate-x-1/2 text-balance justify-center items-center flex bg-white text-black text-xs font-medium px-3 py-2 rounded-md shadow-lg min-w-max max-w-sm whitespace-normal"
           >
             Switch between editor, preview, and split mode once the code is
             ready.

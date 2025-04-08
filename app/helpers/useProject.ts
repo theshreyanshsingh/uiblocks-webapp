@@ -21,6 +21,9 @@ export function useProject() {
   const dispatch: AppDispatch = useDispatch();
   const path = usePathname();
 
+  //clear all the present data
+  // dispatch(EmptySheet());
+
   // Use a ref to track if we've already fetched this project
   const fetchedRef = useRef<string | null>(null);
 

@@ -15,9 +15,14 @@ const Messages: NextPage = () => {
   const { messages } = useSelector(
     (state: RootState) => state.messagesprovider
   );
+  const { generating } = useSelector(
+    (state: RootState) => state.projectOptions
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [displayedText, setDisplayedText] = useState<string[]>([]); // Only tracks current text
-  const [waitingForResponse, setWaitingForResponse] = useState(false);
+  const [waitingForResponse, setWaitingForResponse] = useState<boolean | null>(
+    null
+  );
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -153,7 +158,7 @@ const Messages: NextPage = () => {
             </div>
           );
         })}
-      {waitingForResponse && (
+      {waitingForResponse && generating && (
         <div className="flex items-center gap-2 text-gray-400 text-sm">
           <Image
             src={logo}

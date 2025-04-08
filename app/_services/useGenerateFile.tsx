@@ -51,9 +51,8 @@ export const maxDuration = 60;
 export const useGenerateFile = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { email } = useAuthenticated();
-  const { projectId, framework, csslib, memory, promptCount } = useSelector(
-    (state: RootState) => state.projectOptions
-  );
+  const { projectId, framework, csslib, memory, promptCount, enh_prompt } =
+    useSelector((state: RootState) => state.projectOptions);
   const { data } = useSelector((state: RootState) => state.projectFiles); //files
   const { images, imageURLs } = useSelector(
     (state: RootState) => state.basicData
@@ -119,7 +118,7 @@ export const useGenerateFile = () => {
       if (!email) return;
 
       const rawString = JSON.stringify({
-        input,
+        input: input,
         memory: sessionStorage.getItem("memory") || "",
         cssLibrary: sessionStorage.getItem("css") || "tailwindcss",
         framework: sessionStorage.getItem("framework") || "react",
@@ -135,7 +134,7 @@ export const useGenerateFile = () => {
           generationSuccess: "thinking",
         })
       );
-      dispatch(setEmptyMarkdown(""));
+      dispatch(EmptySheet());
       dispatch(setReaderMode(false));
       setIsGenerating(true);
 
@@ -167,7 +166,7 @@ export const useGenerateFile = () => {
       }
 
       const files = extractGeneratedFilesObjectString(finalData);
-
+      console.log(res);
       if (files) {
         dispatch(setprojectData({ ...files }));
         dispatch(
@@ -464,8 +463,7 @@ export const useGenerateFile = () => {
       }
 
       const finalData = JSON.stringify({
-        userPrompt:
-          "You need to find the error in the give code and only return the fixed/modified file",
+        userPrompt: enh_prompt,
         framework,
         csslib,
         memory,

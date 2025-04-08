@@ -53,7 +53,7 @@ const Sheet: NextPage = () => {
   }, [url]);
 
   return (
-    <div className="flex flex-col flex-grow md:max-w-[97vw] md:w-[60vw]  max-md:h-[95vh]  max-md:w-screen overflow-hidden bg-[#121214]">
+    <div className="flex flex-col flex-grow md:max-w-[97vw] md:w-[60vw]  max-md:h-[96vh]  max-md:w-screen overflow-hidden bg-[#121214]">
       <Header />
 
       {!isResponseCompleted && generationSuccess === null && enh_prompt && (
@@ -97,7 +97,7 @@ const Sheet: NextPage = () => {
             >
               <SandpackLayout className="md:h-[95vh] h-[93vh] w-full">
                 <div className="flex flex-col overflow-hidden w-full h-full">
-                  {mode === "edit" && (
+                  {/* {mode === "edit" && (
                     <motion.div
                       className="h-full"
                       initial={{ opacity: 0 }}
@@ -136,7 +136,52 @@ const Sheet: NextPage = () => {
                         <WebEditor />
                       </div>
                     </motion.div>
-                  )}
+                  )} */}
+                  {/* Edit Mode Content */}
+                  <motion.div
+                    className="h-full absolute inset-0"
+                    animate={{
+                      opacity: mode === "edit" ? 1 : 0,
+                      display: mode === "edit" ? "block" : "none", // Optional: hide completely
+                    }}
+                    initial={false}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <SubHeader />
+                    <Canvas />
+                  </motion.div>
+
+                  {/* Code Mode Content */}
+                  <motion.div
+                    className="h-full w-full absolute inset-0"
+                    animate={{
+                      opacity: mode === "code" ? 1 : 0,
+                      display: mode === "code" ? "block" : "none", // Optional: hide completely
+                    }}
+                    initial={false}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <WebEditor />
+                  </motion.div>
+
+                  {/* Split Mode Content */}
+                  <motion.div
+                    className="h-full w-full flex absolute inset-0"
+                    animate={{
+                      opacity: mode === "split" ? 1 : 0,
+                      display: mode === "split" ? "flex" : "none", // Optional: hide completely
+                    }}
+                    initial={false}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div style={{ width: "50%", height: "100%" }}>
+                      <SubHeader />
+                      <Canvas />
+                    </div>
+                    <div style={{ width: "50%", height: "100%" }}>
+                      <WebEditor />
+                    </div>
+                  </motion.div>
                 </div>
               </SandpackLayout>
             </SandpackProvider>

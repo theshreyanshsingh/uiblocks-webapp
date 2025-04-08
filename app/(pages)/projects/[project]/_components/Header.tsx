@@ -37,7 +37,7 @@ const Header: NextPage = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="w-full pl-3 flex justify-between items-center bg-[#141415] h-[7vh] md:h-[5vh] shadow-md">
+    <div className="w-full pl-3 flex justify-between items-center bg-[#141415] py-2 shadow-md">
       {/* Title */}
       {title ? (
         <h3 className="md:text-sm text-xs font-sans font-medium text-white truncate max-w-full overflow-hidden whitespace-nowrap">
