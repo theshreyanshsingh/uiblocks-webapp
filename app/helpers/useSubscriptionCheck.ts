@@ -1,7 +1,6 @@
 "use client";
 
-import { signal } from "@preact/signals";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { API } from "../config/Config";
 
 type UseSubscriptionCheckProps = {
