@@ -1,7 +1,7 @@
 "use client";
 
 import { signal } from "@preact/signals";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { API } from "../config/Config";
 
 type UseSubscriptionCheckProps = {
@@ -14,10 +14,9 @@ export function useSubscriptionCheck({
   email,
 }: UseSubscriptionCheckProps) {
   const needsUpgradeRef = useRef<boolean | null>(null);
-  const needsUpgrade = signal<boolean>(false);
 
   const checkSubscriptionStatus = async () => {
-    if (!isAuthenticated || !email) return;
+    if (!isAuthenticated || !email) return needsUpgradeRef.current;
 
     try {
       const response = await fetch(`${API}/sub-status`, {
@@ -37,11 +36,10 @@ export function useSubscriptionCheck({
       const data = await response.json();
 
       // Check if prompt count is 0 and plan is free
-      const upgradeNeeded = data.promptCount === 0 && data.plan === "free";
+      const upgradeNeeded = data.promptCount === 0;
 
       // Store in ref for persistence
       needsUpgradeRef.current = upgradeNeeded;
-      needsUpgrade.value = upgradeNeeded;
 
       return upgradeNeeded;
     } catch (error) {
@@ -50,5 +48,5 @@ export function useSubscriptionCheck({
     }
   };
 
-  return { needsUpgrade, checkSubscriptionStatus };
+  return { needsUpgrade: needsUpgradeRef.current, checkSubscriptionStatus };
 }

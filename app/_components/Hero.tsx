@@ -284,15 +284,15 @@ const Hero = () => {
     }
   };
 
+  const checkStatus = useCallback(async () => {
+    if (isAuthenticated.value && email.value && !checkRef.current) {
+      checkRef.current = true;
+      await checkSubscriptionStatus();
+    }
+  }, [email.value]);
+
   useEffect(() => {
     // Only check subscription status once when component mounts
-    const checkStatus = async () => {
-      if (isAuthenticated.value && email.value && !checkRef.current) {
-        checkRef.current = true;
-        await checkSubscriptionStatus();
-      }
-    };
-
     checkStatus();
 
     // Cleanup function for attachments
@@ -303,7 +303,7 @@ const Hero = () => {
         }
       });
     };
-  }, []); // Empty dependency array to ensure it only runs once
+  }, [email.value]);
 
   const handleGenerate = useCallback(async () => {
     setLoading(true);
@@ -372,7 +372,7 @@ const Hero = () => {
           variants={inputBoxVariants}
           className="w-full space-y-4"
         >
-          {needsUpgrade.value && (
+          {needsUpgrade === true && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -408,7 +408,7 @@ const Hero = () => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
 
-                  if (needsUpgrade.value) {
+                  if (needsUpgrade) {
                     dispatch(setPricingModalOpen(true));
                   } else {
                     if (input.trim() && !loading) {
@@ -422,7 +422,7 @@ const Hero = () => {
             {/* Action Buttons */}
             <div className="justify-between items-center flex w-full">
               <button
-                disabled={loading}
+                disabled={loading || (needsUpgrade as boolean)}
                 onClick={handleAttachClick}
                 className="cursor-pointer text-[#71717A] bg-[#201F22] px-2 p-1 rounded-md text-xs font-sans font-medium gap-x-1 flex justify-center items-center hover:bg-[#2a292c] transition-colors"
               >
@@ -436,7 +436,7 @@ const Hero = () => {
                 accept="image/*"
                 className="hidden"
               />
-              {needsUpgrade.value ? (
+              {needsUpgrade === true ? (
                 <button
                   disabled={loading}
                   onClick={() => {
@@ -447,7 +447,7 @@ const Hero = () => {
                   Upgrade to scale
                   <BsLightningChargeFill />
                 </button>
-              ) : (
+              ) : needsUpgrade === false ? (
                 <button
                   disabled={loading}
                   onClick={handleGenerate}
@@ -458,6 +458,13 @@ const Hero = () => {
                   ) : (
                     <FaArrowRight />
                   )}
+                </button>
+              ) : (
+                <button
+                  disabled={loading}
+                  className="cursor-pointer hover:bg-gray-200 text-[#71717A] bg-white p-2 rounded-md text-xs font-sans font-medium gap-x-1 flex justify-center items-center"
+                >
+                  <LuLoaderCircle className="animate-spin" />
                 </button>
               )}
             </div>
