@@ -68,9 +68,9 @@ const Page = () => {
             6. Limitation of Liability
           </h2>
           <p className="text-gray-300 mb-4">
-            UIBlocks is provided "as is" without any warranties. We are not
-            liable for any damages arising from the use or inability to use our
-            services.
+            UIBlocks is provided &quot;as is&quot; without any warranties. We
+            are not liable for any damages arising from the use or inability to
+            use our services.
           </p>
         </section>
 
