@@ -19,7 +19,7 @@ export const createCheckout = async ({
   });
 
   return await polar.checkouts.create({
-    productId: "66289435-2223-42af-aba0-b4cffc76abac",
+    productId: "27c09739-c2b8-465c-9a68-25de037a26db",
     customerEmail: email,
     customerExternalId: id,
     successUrl: "http://localhost:3000/projects/settings",
