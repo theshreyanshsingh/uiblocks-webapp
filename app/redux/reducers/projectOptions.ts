@@ -2,7 +2,6 @@ import { API } from "@/app/config/Config";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { setmessages } from "./Mesages";
 import { clearImagesURL, setId, setPlan } from "./basicData";
-import { EmptySheet } from "./projectFiles";
 
 interface FetchProjectParams {
   string: string;
@@ -25,10 +24,6 @@ export const fetchProject = createAsyncThunk<
   FetchProjectParams
 >("projectOptions/fetchProject", async ({ string: requestBody }, thunkAPI) => {
   try {
-    // Clear url and enh_prompt before making the request
-    thunkAPI.dispatch(clearUrlAndPrompt());
-    thunkAPI.dispatch(EmptySheet());
-
     const url = `${API}/build-project`;
     const response = await fetch(url, {
       method: "POST",

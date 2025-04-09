@@ -20,10 +20,8 @@ import { IoReload } from "react-icons/io5";
 const Sheet: NextPage = () => {
   const {
     mode,
-
     framework,
     url,
-
     isResponseCompleted,
     enh_prompt,
     generationSuccess,
