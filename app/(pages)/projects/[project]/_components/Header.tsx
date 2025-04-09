@@ -104,7 +104,7 @@ const Header: NextPage = () => {
         </button>
       </div>
       {dropdownOpen && (
-        <div className="md:hidden absolute right-1 top-22 mt-2 w-30 bg-[#1A1A1A] rounded-md shadow-lg z-10 border border-[#252525]">
+        <div className="md:hidden absolute right-1 top-22 mt-2 w-30 bg-[#1A1A1A] rounded-md shadow-lg z-40 border border-[#252525]">
           <button
             onClick={() => {
               dispatch(setMemoryModal(!memoryModal));
