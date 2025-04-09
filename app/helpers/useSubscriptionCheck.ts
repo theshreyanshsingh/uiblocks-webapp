@@ -15,7 +15,13 @@ export function useSubscriptionCheck({
   const needsUpgradeRef = useRef<boolean | null>(null);
 
   const checkSubscriptionStatus = async () => {
-    if (!isAuthenticated || !email) return needsUpgradeRef.current;
+    // Return false if not authenticated
+    if (!isAuthenticated || !email) return false;
+
+    // Return current ref value if already set
+    if (needsUpgradeRef.current !== null) {
+      return needsUpgradeRef.current;
+    }
 
     try {
       const response = await fetch(`${API}/sub-status`, {
@@ -47,5 +53,8 @@ export function useSubscriptionCheck({
     }
   };
 
-  return { needsUpgrade: needsUpgradeRef.current, checkSubscriptionStatus };
+  return {
+    needsUpgrade: !isAuthenticated ? false : needsUpgradeRef.current,
+    checkSubscriptionStatus,
+  };
 }
