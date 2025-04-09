@@ -166,7 +166,7 @@ export const useGenerateFile = () => {
       }
 
       const files = extractGeneratedFilesObjectString(finalData);
-      console.log(res);
+
       if (files) {
         dispatch(setprojectData({ ...files }));
         dispatch(

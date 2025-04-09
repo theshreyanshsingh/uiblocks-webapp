@@ -29,6 +29,7 @@ const model = genAI.getGenerativeModel({
     topP: 0.95,
     topK: 60,
     maxOutputTokens: 11000,
+    responseMimeType: "text/plain",
   },
 });
 
