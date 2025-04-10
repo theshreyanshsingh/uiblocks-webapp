@@ -104,7 +104,7 @@ const Messages: NextPage = () => {
                 </span>
               </div>
               <motion.p
-                className="text-sm font-sans p-3 font-medium"
+                className="text-sm font-sans p-3 font-medium text-white"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
@@ -140,6 +140,7 @@ const Messages: NextPage = () => {
                           delay: i * 0.05,
                           ease: "easeOut",
                         }}
+                        className="text-white"
                       >
                         {word}{" "}
                       </motion.span>

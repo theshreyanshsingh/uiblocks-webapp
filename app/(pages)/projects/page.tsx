@@ -133,7 +133,7 @@ const Page = () => {
                         </h3>
 
                         <div className="justify-start space-x-2 w-full items-center flex">
-                          <LuBrain className="text-sm" />
+                          <LuBrain className="text-sm text-white" />
                           <h3 className="text-xs font-sans font-medium text-white  overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
                             {project.memory ? project.memory : "Empty"}
                           </h3>
@@ -185,7 +185,7 @@ const Page = () => {
                         </h3>
 
                         <div className="justify-start space-x-2 w-full items-center flex">
-                          <LuBrain className="text-sm " />
+                          <LuBrain className="text-sm text-white" />
                           <h3 className="text-xs font-sans font-medium text-white  overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
                             {project.memory ? project.memory : "Empty"}
                           </h3>

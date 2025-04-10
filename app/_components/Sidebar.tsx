@@ -136,7 +136,7 @@ const Sidebar = () => {
             }}
             whileHover={{ scale: 1.1, filter: "brightness(1.3)" }}
             transition={{ duration: 0.2 }}
-            className=" justify-center items-center flex cursor-pointer bg-[#252527] rounded-md ml-2  px-2"
+            className=" justify-center items-center flex cursor-pointer bg-[#252527] rounded-md ml-2  px-2 text-white"
             initial={{ opacity: 0, scaleX: 0 }}
             animate={{ opacity: 0.5, scaleX: 1 }}
           >

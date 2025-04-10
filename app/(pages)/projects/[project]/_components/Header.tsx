@@ -73,7 +73,7 @@ const Header: NextPage = () => {
               <span className="text-xs hidden sm:inline">Connect with</span>
               <LuGithub />
             </button>
-            <button className="text-black bg-white hover:bg-gray-200 px-2 rounded-lg">
+            <button className="text-black bg-white hover:bg-gray-200 px-3 py-[2px] rounded-md justify-center items-center flex">
               <span className="text-xs hidden sm:inline">Deploy</span>
             </button>
           </div>
