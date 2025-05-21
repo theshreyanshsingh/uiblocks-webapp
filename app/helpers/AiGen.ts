@@ -13,7 +13,7 @@ export const maxDuration = 60;
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY_1!);
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-pro-exp-03-25",
+  model: "gemini-2.5-flash-preview-05-20",
   safetySettings: [
     {
       category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
