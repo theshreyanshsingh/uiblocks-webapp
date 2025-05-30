@@ -46,7 +46,7 @@ function decodeJsonString(str: string | null | undefined): string {
   }
 }
 
-export const maxDuration = 60;
+// export const maxDuration = 60;
 
 export const useGenerateFile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -71,54 +71,39 @@ export const useGenerateFile = () => {
     dispatch(sendaMessage(msg));
   };
 
-  function extractGeneratedFilesObjectString(
-    rawMarkdown: string | null | undefined
-  ): object | null {
-    if (
-      !rawMarkdown ||
-      typeof rawMarkdown !== "string" ||
-      !rawMarkdown.trim()
-    ) {
+  function extractGeneratedFilesObjectString(rawMarkdown: any) {
+    if (typeof rawMarkdown !== "string" || !rawMarkdown.trim()) {
       return null;
     }
 
-    const jsonBlockRegex = /```json\n([\s\S]*?)```/;
+    // Robust regex to handle variations in whitespace and newlines
+    const jsonBlockRegex = /```json\s*?\n?([\s\S]*?)\n?```/;
     const match = rawMarkdown.match(jsonBlockRegex);
+
     if (!match) {
       return null;
     }
 
-    const innerContent = match[1].trim();
-
     try {
-      const parsed = JSON.parse(innerContent);
-      if (parsed.generatedFiles && typeof parsed.generatedFiles === "object") {
-        if (email && typeof email.value === "string" && projectId) {
-          saveProject({
-            data: JSON.stringify(parsed.generatedFiles),
-            projectId,
-            email: email.value,
-          });
-        }
+      const parsed = JSON.parse(match[1].trim());
+      if (
+        parsed &&
+        typeof parsed.generatedFiles === "object" &&
+        parsed.generatedFiles !== null
+      ) {
         return parsed.generatedFiles;
-      } else {
-        return null;
       }
+      return null;
     } catch (e) {
-      console.error(
-        "extractGeneratedFilesObjectString: Error parsing JSON:",
-        e
-      );
       return null;
     }
   }
-
   const genFile = async ({ email, projectId, input }: GenerateFileParams) => {
     try {
       if (!email) return;
 
       const rawString = JSON.stringify({
-        input: input,
+        prompt: input,
         memory: sessionStorage.getItem("memory") || "",
         cssLibrary: sessionStorage.getItem("css") || "tailwindcss",
         framework: sessionStorage.getItem("framework") || "react",
@@ -138,7 +123,7 @@ export const useGenerateFile = () => {
       dispatch(setReaderMode(false));
       setIsGenerating(true);
 
-      const res = await fetch("/api/generate", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API}/old/agent`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -159,9 +144,26 @@ export const useGenerateFile = () => {
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        if (typeof chunk === "string") {
-          finalData += chunk;
-          dispatch(setMarkdown(chunk));
+
+        const lines = chunk.split("\n").filter((line) => line.trim());
+
+        for (const line of lines) {
+          // Check if it's a data line
+          if (line.startsWith("data: ")) {
+            const content = line.slice(6); // Remove "data: " prefix
+
+            // Check if it's the end marker
+            if (content === "[DONE]") {
+              console.log("Stream completed");
+              break;
+            }
+
+            // Handle regular content
+            if (content.startsWith("stream_start")) continue;
+
+            finalData += content;
+            dispatch(setMarkdown(content));
+          }
         }
       }
 
