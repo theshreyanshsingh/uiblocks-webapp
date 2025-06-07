@@ -97,7 +97,9 @@ const Hero = () => {
     };
 
     const timeout = setTimeout(updateText, typingSpeed);
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [charIndex, isDeleting, textIndex]);
 
   const handleAttachClick = () => {

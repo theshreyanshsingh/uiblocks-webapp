@@ -151,13 +151,13 @@ const StreamedProgressiveDisplay: React.FC = () => {
   const processedContent: ProcessedResult = useMemo(() => {
     const rawString = typeof markdown === "string" ? markdown : "";
     if (!rawString.trim()) return { status: "empty", raw: rawString };
-    const hasJsonPrefix = rawString.startsWith("```json\n");
-    const hasJsonSuffix = rawString.endsWith("```");
+    const hasJsonPrefix = rawString.startsWith("___start___");
+    const hasJsonSuffix = rawString.endsWith("___end___");
     if (!hasJsonPrefix) return { status: "raw_unexpected", raw: rawString };
     const innerContent = rawString
       .substring(
-        "```json\n".length,
-        hasJsonSuffix ? rawString.length - "```".length : rawString.length
+        "___start___".length,
+        hasJsonSuffix ? rawString.length - "___end___".length : rawString.length
       )
       .trimStart();
     const hasStepsKey = innerContent.includes('"Steps":');

@@ -15,7 +15,6 @@ import { usePathname } from "next/navigation";
 import { useGenerateFile } from "@/app/_services/useGenerateFile";
 import EnhancedPrompt from "./_sub-components/EnhancedPrompt";
 import Thoughts from "./_sub-components/Thoughts";
-import { IoReload } from "react-icons/io5";
 
 const Sheet: NextPage = () => {
   const {
@@ -27,7 +26,7 @@ const Sheet: NextPage = () => {
     generationSuccess,
   } = useSelector((state: RootState) => state.projectOptions);
   const { data } = useSelector((state: RootState) => state.projectFiles);
-  const { fixWithAI, fetchProjectFiles } = useGenerateFile();
+  const { fetchProjectFiles } = useGenerateFile();
 
   const path = usePathname();
 
@@ -82,59 +81,17 @@ const Sheet: NextPage = () => {
               suppressHydrationWarning
               suppressContentEditableWarning
               template={
-                framework === "Next.js"
-                  ? "nextjs"
-                  : framework?.toLowerCase() === "react"
-                    ? "react"
-                    : framework === "Basic HTML"
-                      ? "static"
-                      : "vue"
+                framework?.toLowerCase() === "react"
+                  ? "react"
+                  : framework === "Basic HTML"
+                    ? "static"
+                    : "vue"
               }
               files={{ ...data }}
               theme="dark"
             >
               <SandpackLayout className="md:h-[95vh] h-[93vh] w-full">
                 <div className="flex flex-col overflow-hidden w-full h-full">
-                  {/* {mode === "edit" && (
-                    <motion.div
-                      className="h-full"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <SubHeader />
-                      <Canvas />
-                    </motion.div>
-                  )}
-                  {mode === "code" && (
-                    <motion.div
-                      className="h-full w-full"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <WebEditor />
-                    </motion.div>
-                  )}
-                  {mode === "split" && (
-                    <motion.div
-                      className="h-full w-full flex"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <div style={{ width: `50%`, height: "100%" }}>
-                        <SubHeader />
-                        <Canvas />
-                      </div>
-                      <div style={{ width: `50%`, height: "100%" }}>
-                        <WebEditor />
-                      </div>
-                    </motion.div>
-                  )} */}
                   {/* Edit Mode Content */}
                   <motion.div
                     className="h-full absolute inset-0"
@@ -209,15 +166,9 @@ const Sheet: NextPage = () => {
             className="justify-center items-center flex max-md:h-[90vh] h-full w-full flex-col space-y-3"
           >
             <h3 className="text-sm font-sans font-medium text-white">
-              An error occurred while generating the project files.
+              An error occurred while generating the project files, Please
+              Refresh.
             </h3>
-            <button
-              onClick={() => fixWithAI()}
-              className="text-sm font-sans font-medium text-white flex justify-center items-center gap-x-2"
-            >
-              Fix it
-              <IoReload />
-            </button>
           </motion.div>
         )}
       </AnimatePresence>

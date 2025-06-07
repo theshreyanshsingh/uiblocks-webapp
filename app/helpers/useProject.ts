@@ -11,6 +11,7 @@ import {
 import { EmptySheet } from "@/app/redux/reducers/projectFiles";
 import { useAuthenticated } from "./useAuthenticated";
 import { usePathname } from "next/navigation";
+import { clearImageUrls } from "../redux/reducers/basicData";
 
 /**
  * Custom hook to fetch and manage project data efficiently
@@ -62,8 +63,8 @@ export function useProject() {
     });
 
     dispatch(fetchProject({ string: rawString }));
+    dispatch(clearImageUrls());
   }, [
-    path,
     isAuthenticated.value,
     email.value,
     imageURLs,

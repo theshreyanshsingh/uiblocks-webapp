@@ -196,6 +196,9 @@ const basicData = createSlice({
     clearImages: (state) => {
       state.images = [];
     },
+    clearImageUrls: (state) => {
+      state.imageURLs = [];
+    },
     addImageURL: (state, action: PayloadAction<string>) => {
       if (state.imageURLs.length < 2) {
         state.imageURLs.push(action.payload);
@@ -245,5 +248,6 @@ export const {
   setId,
   setIsSidebarCollapsed,
   setMobileChatOpen,
+  clearImageUrls,
 } = basicData.actions;
 export default basicData.reducer;

@@ -15,9 +15,10 @@ import {
 import { setNotification } from "../redux/reducers/NotificationModalReducer";
 import { useAuthenticated } from "../helpers/useAuthenticated";
 import { AppDispatch, RootState } from "../redux/store";
-import { saveMoreDatatoProject, saveProject } from "./projects";
+// import { saveMoreDatatoProject } from "./projects";
 import { saveMsgToDb, sendaMessage } from "../redux/reducers/Mesages";
 import { clearImages, clearImagesURL } from "../redux/reducers/basicData";
+import { saveMoreDatatoProject } from "./projects";
 
 interface GenerateFileParams {
   email: string;
@@ -70,22 +71,13 @@ export const useGenerateFile = () => {
 
     dispatch(sendaMessage(msg));
   };
-
-  function extractGeneratedFilesObjectString(rawMarkdown: any) {
+  function extractGeneratedFilesObjectString(rawMarkdown: string) {
     if (typeof rawMarkdown !== "string" || !rawMarkdown.trim()) {
       return null;
     }
 
-    // Robust regex to handle variations in whitespace and newlines
-    const jsonBlockRegex = /```json\s*?\n?([\s\S]*?)\n?```/;
-    const match = rawMarkdown.match(jsonBlockRegex);
-
-    if (!match) {
-      return null;
-    }
-
     try {
-      const parsed = JSON.parse(match[1].trim());
+      const parsed = JSON.parse(rawMarkdown);
       if (
         parsed &&
         typeof parsed.generatedFiles === "object" &&
@@ -95,9 +87,11 @@ export const useGenerateFile = () => {
       }
       return null;
     } catch (e) {
+      console.log(e);
       return null;
     }
   }
+
   const genFile = async ({ email, projectId, input }: GenerateFileParams) => {
     try {
       if (!email) return;
@@ -137,40 +131,98 @@ export const useGenerateFile = () => {
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
-      let finalData = "";
+
+      let streamBuffer = "";
+      let dispatchstreamBuffer = "";
+      let isCapturing = false;
+      let completeContent = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-
         const lines = chunk.split("\n").filter((line) => line.trim());
 
         for (const line of lines) {
-          // Check if it's a data line
           if (line.startsWith("data: ")) {
-            const content = line.slice(6); // Remove "data: " prefix
+            const content = line.slice(6);
 
-            // Check if it's the end marker
-            if (content === "[DONE]") {
-              console.log("Stream completed");
-              break;
-            }
-
-            // Handle regular content
+            if (content === "[DONE]") break;
             if (content.startsWith("stream_start")) continue;
 
-            finalData += content;
-            dispatch(setMarkdown(content));
+            streamBuffer += content;
+            dispatchstreamBuffer += content;
+            // for extracting
+            while (true) {
+              if (!isCapturing) {
+                const startIndex = streamBuffer.indexOf("t___");
+
+                const dispatchstartIndex = streamBuffer.indexOf("___start___");
+                if (startIndex === -1 || dispatchstartIndex === -1) break;
+
+                streamBuffer = streamBuffer.slice(startIndex + 4);
+                dispatchstreamBuffer =
+                  dispatchstreamBuffer.slice(dispatchstartIndex);
+                isCapturing = true;
+              } else {
+                const endIndex = streamBuffer.indexOf("}___end___");
+                const dispatchendIndex = streamBuffer.indexOf("___end___");
+
+                if (dispatchendIndex === -1) {
+                  if (dispatchstreamBuffer.length > 10) {
+                    const toDispatch = dispatchstreamBuffer.slice(0, -10);
+                    dispatch(setMarkdown(toDispatch));
+
+                    dispatchstreamBuffer = dispatchstreamBuffer.slice(-10);
+                  }
+                  break;
+                } else {
+                  // Include the end marker in the final content
+                  const finalContent = dispatchstreamBuffer.slice(
+                    0,
+                    endIndex + 9
+                  ); // +9 to include "___end___"
+                  dispatch(setMarkdown(finalContent));
+
+                  dispatchstreamBuffer = dispatchstreamBuffer.slice(
+                    endIndex + 9
+                  );
+                  isCapturing = false;
+                }
+
+                if (endIndex === -1) {
+                  if (streamBuffer.length > 10) {
+                    const toDispatch = streamBuffer.slice(0, -10);
+                    // dispatch(setMarkdown(toDispatch));
+                    completeContent += toDispatch;
+                    streamBuffer = streamBuffer.slice(-10);
+                  }
+                  break;
+                } else {
+                  const finalContent = streamBuffer.slice(0, endIndex + 1);
+                  // dispatch(setMarkdown(finalContent));
+                  completeContent += finalContent;
+
+                  streamBuffer = streamBuffer.slice(endIndex + 10);
+                  isCapturing = false;
+                }
+              }
+            }
           }
         }
       }
 
-      const files = extractGeneratedFilesObjectString(finalData);
+      const files = extractGeneratedFilesObjectString(completeContent);
 
       if (files) {
         dispatch(setprojectData({ ...files }));
+        saveMoreDatatoProject({
+          data: JSON.stringify({ ...data, ...files }),
+          email: email || "",
+          projectId: projectId || "",
+        });
+
         dispatch(
           setGenerating({
             generating: false,
@@ -315,55 +367,116 @@ export const useGenerateFile = () => {
         })
       );
 
-      const finalData = JSON.stringify({
-        userPrompt: message,
-        framework,
-        csslib,
-        memory,
-        chatHistory: messages,
-        data,
+      const rawString = JSON.stringify({
+        prompt: message.text,
+        memory: sessionStorage.getItem("memory") || "",
+        cssLibrary: sessionStorage.getItem("css") || "tailwindcss",
+        framework: sessionStorage.getItem("framework") || "react",
+        projectId: projectId || "",
+        owner: email.value || "",
         images: imageURLs,
       });
 
       dispatch(clearImages());
       dispatch(clearImagesURL());
 
-      const response = await fetch("/api/chat", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API}/old/agent`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: finalData,
+        body: rawString,
       });
 
-      if (!response.ok) {
-        throw new Error(
-          `API Error: ${response.status} ${await response.text()}`
-        );
-      }
+      if (!res.ok)
+        throw new Error(`API Error: ${res.status} ${await res.text()}`);
+      if (!res.body) throw new Error("Response body is null");
 
-      if (!response.body) {
-        throw new Error("Response body is null");
-      }
-
-      const reader = response.body.getReader();
+      const reader = res.body.getReader();
       const decoder = new TextDecoder();
-      let finalMakrdown = "";
+
+      let streamBuffer = "";
+      let dispatchstreamBuffer = "";
+      let isCapturing = false;
+      let completeContent = "";
 
       while (true) {
         const { done, value } = await reader.read();
-        if (done) {
-          break;
-        }
+        if (done) break;
 
         const chunk = decoder.decode(value, { stream: true });
-        if (typeof chunk === "string") {
-          finalMakrdown += chunk;
-          dispatch(setMarkdown(chunk));
+        const lines = chunk.split("\n").filter((line) => line.trim());
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const content = line.slice(6);
+
+            if (content === "[DONE]") break;
+            if (content.startsWith("stream_start")) continue;
+
+            streamBuffer += content;
+            dispatchstreamBuffer += content;
+            // for extracting
+            while (true) {
+              if (!isCapturing) {
+                const startIndex = streamBuffer.indexOf("t___");
+
+                const dispatchstartIndex = streamBuffer.indexOf("___start___");
+                if (startIndex === -1 || dispatchstartIndex === -1) break;
+
+                streamBuffer = streamBuffer.slice(startIndex + 4);
+                dispatchstreamBuffer =
+                  dispatchstreamBuffer.slice(dispatchstartIndex);
+                isCapturing = true;
+              } else {
+                const endIndex = streamBuffer.indexOf("}___end___");
+                const dispatchendIndex = streamBuffer.indexOf("___end___");
+
+                if (dispatchendIndex === -1) {
+                  if (dispatchstreamBuffer.length > 10) {
+                    const toDispatch = dispatchstreamBuffer.slice(0, -10);
+                    dispatch(setMarkdown(toDispatch));
+
+                    dispatchstreamBuffer = dispatchstreamBuffer.slice(-10);
+                  }
+                  break;
+                } else {
+                  // Include the end marker in the final content
+                  const finalContent = dispatchstreamBuffer.slice(
+                    0,
+                    endIndex + 9
+                  ); // +9 to include "___end___"
+                  dispatch(setMarkdown(finalContent));
+
+                  dispatchstreamBuffer = dispatchstreamBuffer.slice(
+                    endIndex + 9
+                  );
+                  isCapturing = false;
+                }
+
+                if (endIndex === -1) {
+                  if (streamBuffer.length > 10) {
+                    const toDispatch = streamBuffer.slice(0, -10);
+                    // dispatch(setMarkdown(toDispatch));
+                    completeContent += toDispatch;
+                    streamBuffer = streamBuffer.slice(-10);
+                  }
+                  break;
+                } else {
+                  const finalContent = streamBuffer.slice(0, endIndex + 1);
+                  // dispatch(setMarkdown(finalContent));
+                  completeContent += finalContent;
+
+                  streamBuffer = streamBuffer.slice(endIndex + 10);
+                  isCapturing = false;
+                }
+              }
+            }
+          }
         }
       }
 
-      const files = extractMessagesObjectString(finalMakrdown);
+      const files = extractGeneratedFilesObjectString(completeContent);
 
       if (files) {
         saveMoreDatatoProject({
@@ -383,7 +496,7 @@ export const useGenerateFile = () => {
 
         //extracting end message
         const rawString =
-          typeof finalMakrdown === "string" ? finalMakrdown : "";
+          typeof completeContent === "string" ? completeContent : "";
         if (!rawString.trim()) return { status: "empty", raw: rawString };
         const hasJsonPrefix = rawString.startsWith("```json\n");
         const hasJsonSuffix = rawString.endsWith("```");
